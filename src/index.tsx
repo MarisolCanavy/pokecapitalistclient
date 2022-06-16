@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Main from './Main';
 import reportWebVitals from './reportWebVitals';
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
 const client = new ApolloClient({
@@ -13,7 +12,7 @@ cache: new InMemoryCache()
 ReactDOM.render(
   <React.StrictMode>
       <ApolloProvider client={client}>
-    <Main />
+    <App/>
       </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')

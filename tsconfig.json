@@ -22,5 +22,7 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "content": [
+    "./src/**/*.{html, js, jsx, tsx}"]
 }
