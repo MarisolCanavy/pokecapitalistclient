@@ -10,3 +10,10 @@
     transform: rotate(360deg);
   }
 }
+
+.modal {
+ /* position: static; /* reste en place */
+  width: 1200px; /* largeur */
+  height: 800px; /* hauteur */
+}
+

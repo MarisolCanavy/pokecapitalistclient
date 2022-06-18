@@ -17,8 +17,8 @@ module.exports = {
       'dark-gray': '#607078',
       'white': '#FFFFFF',
       'black': '#24282B',
-      'background': '24282B',
-      'color-font': '494949',
+      'background': '#24282B',
+      'color-font': '#494949',
     },
     fontFamily: {
       sans: ['SCR-ITenRegW00-Regular', 'sans-serif'],

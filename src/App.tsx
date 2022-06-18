@@ -38,11 +38,12 @@ function App() {
   }
 
   return (
-    <div className="App bg-bg bg-right-bottom bg-cover bg-background bg-no-repeat w-full h-screen">
+    <div className="App bg-bg bg-right-bottom bg-cover bg-background bg-no-repeat w-screen h-screen">
        <div className="grid grid-rows-2 grid-flow-col gap-8 text-white text-xl  p-6 font-poke max-h-md place-items-center">
        <div className="row-span-2 justify-center ">
           <div className="text-lg m-3 text-center" > Monde de </div>
-          <input type="text" className="flex bg-light-gray border-medium-gray border-4 outline outline-4 outline-dark-gray max-w-xs text-center text-light-light-gray " name="username" value={username}  onChange={onUserNameChanged}/>
+          <input type="text" className="flex bg-light-gray border-medium-gray border-4 outline outline-4 outline-dark-gray max-w-xs text-center text-light-light-gray "
+           name="username" value={username}  onChange={onUserNameChanged}/>
         </div>
       </div>
       {corps}

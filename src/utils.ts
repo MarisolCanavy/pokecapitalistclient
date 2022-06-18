@@ -10,3 +10,9 @@ export function transform(valeur: number): string {
     }
     return res;
    }
+
+export function toFixed2(valeur: number): string {
+    let res : string = "";
+    res = valeur.toFixed(2)
+    return res;
+}
