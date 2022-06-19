@@ -7,6 +7,7 @@ import baie from './images/baie.png';
 import clé from './images/clé.png';
 import message from  './images/message.png';
 import { Manager } from './Components/Managers';
+import { gql, useMutation } from '@apollo/client';
 
 type MainProps = {
   loadworld: World
@@ -55,7 +56,31 @@ type MainProps = {
     let achat: number = poke.cout*((1-Math.pow(poke.croissance, poke.quantite+quantite))/(1-poke.croissance))-poke.cout*((1-Math.pow(poke.croissance, poke.quantite))/(1-poke.croissance))
     //soustraction au monde
     world.money -= achat
+    //passage au serveur de la donnee
+    acheterPokemon({ variables: { id: poke.id , quantite: quantite} });
+
   }
+
+  //ne marche pas, jsp pq
+  const ACHETER_POKEMON = gql`
+    mutation acheterQtProduit($id: Int!, $quantite: Int!) {
+      acheterQtProduit(id: $id, quantite: $quantite) {
+            id
+            quantite
+        }
+    }
+  `;
+
+  // la variable entre crochet sert à definir le nom de la fonction à appeler
+  const [acheterPokemon] = useMutation(ACHETER_POKEMON,
+    { context: { headers: { "x-user": username }},
+    onError: (error): void => {
+    // actions en cas d'erreur
+        console.log("acheterPokemon " + username)
+        console.log("acheterPokemon " + error)
+    }
+    }
+  )
 
   function hireManager(manager: Palier): void{
     //check si on a assez d'argent pour acheter le manager
@@ -107,7 +132,7 @@ type MainProps = {
           </div>
           <div className="grid grid-rows-3 grid-auto-rows grid-cols-2 mx-auto place-items-center gap-x-52 overflow-hidden">
             {world.products.map((poke) => {
-              return <Pokemon poke={poke} key={poke.id} onProductionDone={onProductionDone} qtMulti={qtmulti} moneyJoueur={world.money} onProductBuy={onProductBuy}/* services={services}*//>
+              return <Pokemon poke={poke} key={poke.id} onProductionDone={onProductionDone} qtMulti={qtmulti} moneyJoueur={world.money} onProductBuy={onProductBuy} username={username}/* services={services}*//>
             })}
           </div>
           <div className='w-20'>

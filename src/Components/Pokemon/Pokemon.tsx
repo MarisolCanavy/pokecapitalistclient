@@ -3,6 +3,7 @@ import bulbasaur from "../../images/bulbasaur.png";
 import { toFixed2 } from '../../utils';
 import { Product } from '../../world';
 import { BarreProgres, Orientation } from '../BarreProgres';
+import { useQuery, gql, empty, useMutation } from '@apollo/client';
 
 type PokeProps = {
   poke: Product
@@ -10,11 +11,12 @@ type PokeProps = {
   qtMulti: string
   moneyJoueur: number
   onProductBuy: (product: Product, qtMulti: number) => void
+  username: string
   /*services: Services*/
 }
 
 
-export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, onProductBuy /* , services */} : PokeProps){
+export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, onProductBuy, username /* , services */} : PokeProps){
 
     var [run, lancerProd] = useState(false);
     var quantite: number = 0;
@@ -34,11 +36,33 @@ export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, o
         poke.lastupdate = Date.now()
         //passe run à true
         lancerProd(true);
+        lancerProduction({ variables: { id: poke.id } });
+        {console.log("startFabrication () " + poke.name)}
     };
 
     function onProgressbarCompleted() {
         lancerProd(false);
     }
+
+    //envoie la donnnée vers le serveur : ok, mutationn serveur : ok, retour du serveur : pb
+    const LANCER_PRODUCTION = gql`
+        mutation lancerProductionProduit($id: Int!) {
+            lancerProductionProduit(id: $id) {
+                id
+            }
+        }
+    `;
+
+    // la variable entre crochet sert à definir le nom de la fonction à appeler
+    const [lancerProduction] = useMutation(LANCER_PRODUCTION,
+        { context: { headers: { "x-user": username }},
+        onError: (error): void => {
+        // actions en cas d'erreur
+            console.log("lancerProduction " + username)
+            console.log("lancerProduction " + error)
+        }
+        }
+    )
 
     function calcScore(){
         //si timeleft est different de 0, cela signifie que la production du produit a été lancée
