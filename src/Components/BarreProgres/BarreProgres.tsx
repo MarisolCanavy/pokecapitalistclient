@@ -50,7 +50,7 @@ export default function BarreProgres({
   function fill(ctx: CanvasRenderingContext2D) {
     if (!canvasRef.current || !widthRef.current) return
     let width =  canvasRef.current.width
-    let height = 10 /*canvasRef.current.height*/
+    let height = canvasRef.current.height
     ctx.fillStyle = frontcolor
     if (orientation === Orientation.horizontal) {
       ctx.fillRect(0,0, widthRef.current, height);
@@ -63,7 +63,7 @@ export default function BarreProgres({
   function reset(ctx: CanvasRenderingContext2D) {
     if (!canvasRef.current) return
     const width = canvasRef.current.width
-    const height = 10 /*canvasRef.current.height*/
+    const height = canvasRef.current.height
     ctx.fillStyle = backcolor
     ctx.fillRect(0,0, width, height)
     widthRef.current = 0

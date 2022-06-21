@@ -28,6 +28,7 @@ module.exports = {
     maxWidth: {
       'xxxs': '35%',
     },
+
     extend: {
       backgroundImage: {
         'bg': "url('./images/fondecran.png')",
@@ -36,6 +37,8 @@ module.exports = {
       spacing: {
         '128': '32rem',
         '144': '36rem',
+        '5.5': '5.7rem',
+        '200': '200px'
       },
       borderRadius: {
         '4xl': '2rem',
