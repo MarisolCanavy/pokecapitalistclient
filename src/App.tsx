@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className={`${isLightBackground ? 'bg-light-bg App bg-right-bottom bg-cover bg-background bg-no-repeat w-screen h-screen' : 'bg-dark-bg App bg-right-bottom bg-cover bg-background bg-no-repeat w-screen h-screen'}` }>
-       <button className='absolute top-10 right-10 text-5xl' onClick={changerBackground}> {isLightBackground ? '🌚' : '🌞'} </button>
+       <button className='absolute top-10 right-10 text-5xl' onClick={changerBackground}> {isLightBackground ? '🌞' : '🌚'} </button>
        <div className="grid grid-rows-2 grid-flow-col gap-8 text-white text-xl  p-6 font-poke max-h-md place-items-center">
        <div className="row-span-2 justify-center ">
           <div className="text-lg m-3 text-center" > Monde de </div>

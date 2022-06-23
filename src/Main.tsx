@@ -159,7 +159,7 @@ export default function Main({ loadworld, username } : MainProps) {
           if(world.products.every(poke => poke.quantite >= seuil)){
             handleClick(nextAllUnlock.name + " va nous aider dans l'aventure ! " + nextAllUnlock.typeratio + " x" + nextAllUnlock.ratio)
             nextAllUnlock.unlocked = true
-            
+
             if (nextAllUnlock?.typeratio === "gain") {
               {console.log("upgrade de gain")}
               world.products.forEach( poke => poke.revenu = poke.revenu * ratio )
@@ -314,7 +314,7 @@ export default function Main({ loadworld, username } : MainProps) {
 
       <div className='h-full w-screen'>
         <div className="flex w-screen p-6 h-full">
-          <div className='grid grid-rows-4 grid-cols-1 gap-4 text-white justify-end w-20 place-items-left mt-auto'> 
+          <div className='grid grid-rows-3 grid-cols-1 gap-4 text-white justify-end w-20 place-items-left mt-auto'> 
             <div className="h-12 w-12">
               <img src={cd} onClick={afficheManager}/> 
               <div>
@@ -332,11 +332,6 @@ export default function Main({ loadworld, username } : MainProps) {
               <div>
                 <Upgrade allunlocks={world.upgrades} world={world} showUpgrade={showUpgrades} onCloseUpgrades={onCloseUpgrades} haveUpgrades={haveUpgrades}/>
               </div>
-            </div>
-            <div className="h-12 w-12">
-              <Badge overlap="circular" badgeContent={''} color="primary">
-                <img src={clé}/>
-              </Badge>
             </div>
           </div>
           <div className="grid grid-rows-3 grid-auto-rows grid-cols-2 mx-auto place-items-center gap-x-52 overflow-hidden">

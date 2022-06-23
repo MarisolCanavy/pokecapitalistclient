@@ -35,7 +35,7 @@ export default function manager({managers, world, showManager, onCloseManager, h
                         </div>
                         <div onClick={() => hireManager(manager)}>
                             <button disabled={world.money < manager.seuil || world.products[manager.idcible-1].quantite === 0} 
-                            className="bg-light-gray border-medium-gray border-4 outline outline-4 outline-dark-gray max-w-xs text-center py-1 px-9 mt-2"> Hire !</button>
+                            className="bg-light-gray border-medium-gray border-4 outline outline-4 outline-dark-gray max-w-xs text-center py-1 px-9 mt-2"> Je t'engage !</button>
                         </div>
                     </div>
                     )}
