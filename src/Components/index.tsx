@@ -5,5 +5,6 @@ import { Pokemon } from "./Pokemon";
 import { BarreProgres } from "./BarreProgres";
 import { Unlock } from "./Unlock";
 import { Manager } from "./Managers";
+import { Upgrade } from "./Upgrades";
 
-export {Money, Score, Bouton, Pokemon, BarreProgres, Unlock, Manager}
+export {Money, Score, Bouton, Pokemon, BarreProgres, Unlock, Manager, Upgrade}

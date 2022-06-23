@@ -79,10 +79,10 @@ export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, o
                 lancerProd(false)
                 //ajoute du revenu produit au score
                 onProductionDone(poke)
-                
             }
 
         }else if(poke.timeleft === 0 && poke.managerUnlocked){
+            //onProductionDone(poke)
             startFabrication()
         }else{
             // TODO pourquoi mettre à jour la barre de progression ?
@@ -106,7 +106,6 @@ export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, o
                     n+=1
                 } 
             }
-            console.log("maxCanBuy" + n)
             coutQuantite = poke.cout*((1-Math.pow(poke.croissance, poke.quantite+n))/(1-poke.croissance))-poke.cout*((1-Math.pow(poke.croissance, poke.quantite))/(1-poke.croissance))
             quantite = n
         }else{
@@ -136,10 +135,7 @@ export default function Pokemon({poke, onProductionDone, qtMulti, moneyJoueur, o
     if (poke.quantite === 0) {
         image = <img src={"http://localhost:4000" + poke.paliers.find( p => p.unlocked === false)?.logo } className="w-64 h-64 relative grayscale"  alt='img1' onClick={startFabrication}/>
     } else {
-        image = <img src={"http://localhost:4000" + poke.paliers.find( p => p.unlocked === false)?.logo } className="w-64 h-64 relative shake"  alt='img1' onClick={() => {
-            startFabrication();
-            animate();
-          }}/>
+        image = <img src={"http://localhost:4000" + poke.paliers.find( p => p.unlocked === false)?.logo } className="w-64 h-64 relative shake"  alt='img1' onClick={startFabrication}/>
     }
     //faire fitter la progressbar
     if(!poke) return <div></div>

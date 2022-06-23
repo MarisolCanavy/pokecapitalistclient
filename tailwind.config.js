@@ -1,6 +1,6 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx,jpg}",
+    "./src/**/*.{js,jsx,ts,tsx,jpg,png}",
   ],
   theme: {
     colors: {
@@ -32,7 +32,9 @@ module.exports = {
     extend: {
       backgroundImage: {
         'bg': "url('./images/fondecran.png')",
-        'fondPoke': "url('./images/fond2.png')"
+        'fondPoke': "url('./images/fond2.png')",
+        'light-bg': "url('./images/light-background.png')",
+        'dark-bg': "url('./images/dark-background.png')",
       },
       spacing: {
         '128': '32rem',

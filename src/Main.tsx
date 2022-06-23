@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bouton, Money, Pokemon, Score, Unlock } from './Components';
+import { Bouton, Money, Pokemon, Score, Unlock, Upgrade } from './Components';
 import { transform } from './utils';
 import {Palier, Product, World } from './world';
 import cd from './images/cd.png';
@@ -8,8 +8,21 @@ import clé from './images/clé.png';
 import message from  './images/message.png';
 import { Manager } from './Components/Managers';
 import { gql, useMutation } from '@apollo/client';
-import { Button, IconButton, Snackbar } from '@mui/material';
+import { Badge, Button, IconButton, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { createTheme } from '@mui/material/styles';
+import { red } from '@mui/material/colors';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: red[500],
+    },
+    secondary: {
+      main: '#f44336',
+    },
+  },
+});
 
 type MainProps = {
   loadworld: World
@@ -32,10 +45,13 @@ export default function Main({ loadworld, username } : MainProps) {
   const [qtmulti, setQtmulti] = useState("1")
   const [showManager, setShowManager] = useState(false)
   const [showUnlocks, setShowUnlocks] = useState(false)
+  const [showUpgrades, setShowUpgrades] = useState(false)
 
   const [snackPack, setSnackPack] = React.useState<readonly SnackbarMessage[]>([]);
   const [open, setOpen] = React.useState(false);
   const [messageInfo, setMessageInfo] = React.useState<SnackbarMessage | undefined>(undefined,);
+
+  const primary = red[50];
 
   React.useEffect(() => {
     if (snackPack.length && !messageInfo) {
@@ -49,8 +65,7 @@ export default function Main({ loadworld, username } : MainProps) {
     }
   }, [snackPack, messageInfo, open]);
 
-  const handleClick = (message: string) => () => {
-    {console.log("handleClick : Coucou")}
+  function handleClick(message: string){
     setSnackPack((prev) => [...prev, {message, key: new Date().getTime() }]);
   };
 
@@ -67,16 +82,13 @@ export default function Main({ loadworld, username } : MainProps) {
 
   const action = (
     <React.Fragment>
-      <Button onClick={handleClose}>
-        UNDO
-      </Button>
       <IconButton
         size="small"
         aria-label="close"
         color="inherit"
         onClick={handleClose}
       >
-        <CloseIcon fontSize="small" />
+        <CloseIcon fontSize="small"/>
       </IconButton>
     </React.Fragment>
   );
@@ -127,7 +139,37 @@ export default function Main({ loadworld, username } : MainProps) {
 
       if(nextPalier){
         if(poke.quantite >= nextPalier?.seuil){
+          handleClick(poke.name + " " + nextPalier.typeratio + " x" + nextPalier.ratio)
+
           nextPalier.unlocked = true
+
+          //appliquer l'unlock par produit
+          if (nextPalier.typeratio="vitesse"){
+            poke.vitesse = poke.vitesse / nextPalier.ratio
+          }else if (nextPalier.typeratio="gain"){
+            poke.revenu = poke.revenu * nextPalier.ratio
+          }
+        }
+
+        let nextAllUnlock = world.allunlocks.find( allU => allU.unlocked === false)
+
+        if(nextAllUnlock){
+          let seuil = nextAllUnlock?.seuil
+          let ratio = nextAllUnlock?.ratio
+          if(world.products.every(poke => poke.quantite >= seuil)){
+            handleClick(nextAllUnlock.name + " va nous aider dans l'aventure ! " + nextAllUnlock.typeratio + " x" + nextAllUnlock.ratio)
+            nextAllUnlock.unlocked = true
+            
+            if (nextAllUnlock?.typeratio === "gain") {
+              {console.log("upgrade de gain")}
+              world.products.forEach( poke => poke.revenu = poke.revenu * ratio )
+            } else if (nextAllUnlock?.typeratio === "vitesse"){
+              world.products.forEach( poke => poke.vitesse = poke.vitesse / ratio)
+            //TODO 
+            }else if (nextAllUnlock?.typeratio === "ange"){
+            
+            } 
+          }
         }
       }
       setWorld({...world})
@@ -137,7 +179,6 @@ export default function Main({ loadworld, username } : MainProps) {
     
   }
 
-  //OK
   const ACHETER_POKEMON = gql`
     mutation acheterQtProduit($id: Int!, $quantite: Int!) {
       acheterQtProduit(id: $id, quantite: $quantite) {
@@ -152,7 +193,6 @@ export default function Main({ loadworld, username } : MainProps) {
     { context: { headers: { "x-user": username }},
     onError: (error): void => {
     // actions en cas d'erreur
-        console.log("acheterPokemon " + username)
         console.log("acheterPokemon " + error)
     }
     }
@@ -161,7 +201,7 @@ export default function Main({ loadworld, username } : MainProps) {
   function hireManager(manager: Palier): void{
     //check si on a assez d'argent pour acheter le manager
     if(world.money>= manager.seuil){
-      handleClick('Bonjour 2')
+      handleClick("Sacha a raison. " + manager.name + " nous sera utile dans l'aventure.")
       engagerManager({variables: {name : manager.name}})
       //retire le cout du manager
       world.money -= manager.seuil
@@ -193,35 +233,39 @@ export default function Main({ loadworld, username } : MainProps) {
     }
   )
 
-  // TODO
-  function deblockUnlock(unlock: Palier): void{
-    //regarder si on a atteint le seuil et changer
-    if(world.money>= unlock.seuil){
-      console.log("deblockUnlock " + unlock.name + " engagé")
-      debloquerUnlock({variables: {name : unlock.name}})
-      //retire le cout du manager
-      world.money -= unlock.seuil
-      // changement de la propriété du manager et du unlocked manager du pokemon
-      unlock.unlocked = true
-      world.products[unlock.idcible-1].managerUnlocked = true
-      console.log("deblockUnlock " + world.products[unlock.idcible-1].name + " manager " + world.products[unlock.idcible-1].managerUnlocked )
+  function haveUpgrades(upgrade: Palier): void{
+    if(world.money>= upgrade.seuil){
+      handleClick("Excellent ! " + world.products[upgrade.idcible-1].name  + " va nous aider à vaincre le champion de la league." + " (Boost de " + upgrade.typeratio + " x" +upgrade.ratio+")")
+      acheterCashUpgrade({variables: {name : upgrade.name}})
+      //retire le cout de l'upgrade 
+      world.money -= upgrade.seuil
+      // changement de la propriété de l'upgrade
+      upgrade.unlocked = true
+      // application de la proriété de l'upgrade au pokemon
+      if (upgrade.typeratio === "gain") {
+        world.products[upgrade.idcible-1].revenu = world.products[upgrade.idcible-1].revenu * upgrade.ratio
+      } else if (upgrade.typeratio === "vitesse"){
+        world.products[upgrade.idcible-1].vitesse = world.products[upgrade.idcible-1].vitesse / upgrade.ratio
+      //TODO 
+      }else if (upgrade.typeratio === "ange"){
+      
+      } 
       setWorld({...world})
     }else{
-      console.log("deblockUnlock " + " pas assez d'argent pour acheter le manager")
+      console.log("haveUpgrades " + " pas assez d'argent pour acheter le upgrade")
     }
   }
 
-    //OK
-    const DEBLOQUER_UNLOCK = gql`
-    mutation debloquerUnlock($name: String!) {
-      engagerManager(name: $name) {
-            name
-        }
-    }
+  const ACHETER_CASH_UPGRADE = gql`
+  mutation acheterCashUpgrade($name: String!) {
+    acheterCashUpgrade(name: $name) {
+          name
+      }
+  }
   `;
 
   // la variable entre crochet sert à definir le nom de la fonction à appeler
-  const [debloquerUnlock] = useMutation(DEBLOQUER_UNLOCK,
+  const [acheterCashUpgrade] = useMutation(ACHETER_CASH_UPGRADE,
     { context: { headers: { "x-user": username }},
     onError: (error): void => {
     // actions en cas d'erreur
@@ -246,9 +290,17 @@ export default function Main({ loadworld, username } : MainProps) {
     setShowUnlocks(false);
   };
 
+  const afficheUpgrades =() => {
+    setShowUpgrades(true)
+  }
+
+  const onCloseUpgrades =() => {
+    setShowUpgrades(false)
+  }
+
   return (
     <div className='max-h-full'>
-      <div className="grid grid-rows-2 grid-flow-col gap-8 text-white text-xl  p-6 font-poke max-h-md place-items-center" onClick={handleClick('Bonjour 4')}>
+      <div className="grid grid-rows-2 grid-flow-col gap-8 text-white text-xl  p-6 font-poke max-h-md place-items-center">
         <Money> <span dangerouslySetInnerHTML={{__html: transform(world.money)}}/> </Money>
         <Score> {world.score} </Score>
         <div className="col-span-10 row-span-2"> 
@@ -272,14 +324,19 @@ export default function Main({ loadworld, username } : MainProps) {
             <div className="h-12 w-12">
               <img src={baie} onClick={afficheUnlocks}/> 
               <div>
-                <Unlock allunlocks={world.allunlocks} world={world} showUnlock={showUnlocks} onCloseUnlock={onCloseUnlock} deblockUnlock={deblockUnlock}/>
+                <Unlock allunlocks={world.allunlocks} world={world} showUnlock={showUnlocks} onCloseUnlock={onCloseUnlock}/>
               </div>
             </div>
             <div className="h-12 w-12">
-              <img src={clé}/>
+              <img src={message} onClick={afficheUpgrades}/>
+              <div>
+                <Upgrade allunlocks={world.upgrades} world={world} showUpgrade={showUpgrades} onCloseUpgrades={onCloseUpgrades} haveUpgrades={haveUpgrades}/>
+              </div>
             </div>
             <div className="h-12 w-12">
-              <img src={message}/>
+              <Badge overlap="circular" badgeContent={''} color="primary">
+                <img src={clé}/>
+              </Badge>
             </div>
           </div>
           <div className="grid grid-rows-3 grid-auto-rows grid-cols-2 mx-auto place-items-center gap-x-52 overflow-hidden">
@@ -289,17 +346,30 @@ export default function Main({ loadworld, username } : MainProps) {
           </div>
           <div className='w-20'>
           </div>
-          <div className='absolute z-30'>
+          <div className=''>
             <Snackbar
+              ContentProps={{
+                sx: {
+                  background: 'rgb(248 248 248)',
+                  p: 2,
+                  borderRadius: 1,
+                  fontFamily: "SCR-ITenRegW00-Regular, sans-serif",
+                  fontWeight: 500,
+                  fontSize: 17,
+                  color: '#494949',
+                  minWidth: 700,
+                  width: 700
+                }
+              }}
               open={open}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleClose}
               message={messageInfo ? messageInfo.message : undefined}
               action={action}
               key={messageInfo ? messageInfo.key : undefined}
               TransitionProps={{ onExited: handleExited }}
             />
-        </div>
+          </div>
         </div>
       </div>
     </div>
